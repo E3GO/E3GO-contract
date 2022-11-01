@@ -1,25 +1,21 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 const hre = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  // Mumbai
+  //const priceFeed_EURUSD = "0x7d7356bF6Ee5CDeC22B216581E48eCC700D0497A"
+  //const priceFeed_MATICUSD = "0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada"
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  // Polygon
+  const priceFeed_EURUSD = "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0"
+  const priceFeed_MATICUSD = "0x73366Fe0AA0Ded304479862808e02506FE556a98"
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const Proxy = await hre.ethers.getContractFactory("tGHP");
+  const proxy = await upgrades.deployProxy(Proxy, [priceFeed_MATICUSD, priceFeed_EURUSD]);
 
-  await lock.deployed();
+  await proxy.deployed();
 
   console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+    `Proxy with data feed (Mumbai) ${priceFeed_MATICUSD, priceFeed_EURUSD} deployed to ${proxy.address}`
   );
 }
 

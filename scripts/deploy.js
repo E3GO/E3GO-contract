@@ -10,7 +10,7 @@ async function main() {
   const priceFeed_MATICUSD = "0x73366Fe0AA0Ded304479862808e02506FE556a98"
 
   const Proxy = await hre.ethers.getContractFactory("tGHP");
-  const proxy = await upgrades.deployProxy(Proxy, [priceFeed_MATICUSD, priceFeed_EURUSD]);
+  const proxy = await hre.upgrades.deployProxy(Proxy, [priceFeed_MATICUSD, priceFeed_EURUSD]);
 
   await proxy.deployed();
 

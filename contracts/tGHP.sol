@@ -7,8 +7,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 
 /**
  * @title The Golden Head Project proxy contract
@@ -44,12 +44,29 @@ contract tGHP is
     /**
      * @dev mapping token id to price. EUR is express in cent
      */
-    mapping(uint256 => uint256) internal _tokenIdPrice;
+    mapping(uint256 => uint256) internal _tokenIdPrices;
 
     // -----------------------------------------
     // External interface
     // -----------------------------------------
 
+
+    /**
+     * @dev view specific token price
+     * @param tokenId token id
+     */
+    function tokenIdPrice(uint256 tokenId) external view returns(uint256){
+        return _tokenIdPrices[tokenId];
+    }
+    
+    /**
+     * @dev see the wallet where funds are transfered 
+     * @return wallet 
+     */
+    function wallet() external view returns(address){
+        return _wallet;
+    }
+    
     /**
      * @dev mintTo authorize the mint semi-fongible pass directly by a wallet and also thanks to paper.xyz on-ramp integration
      * @param to wallet where the token will be mint
@@ -63,11 +80,11 @@ contract tGHP is
     ) external payable {
         // revert if tokenId has not corresponding pass setup
         require(
-            _tokenIdPrice[tokenId] == 0,
+            _tokenIdPrices[tokenId] != 0,
             "tGHP: This token isn't setup yet."
         );
         require(
-            changeMATICEUR(msg.value) == _tokenIdPrice[tokenId],
+            changeMATICEUR(msg.value) >= _tokenIdPrices[tokenId],
             "tGHP: Not enough to buy."
         );
 
@@ -90,7 +107,7 @@ contract tGHP is
      */
     function createPass(uint256 priceEUR) external onlyOwner {
         _tokenIdCounter.increment();
-        _tokenIdPrice[_tokenIdCounter.current()] = priceEUR;
+        _tokenIdPrices[_tokenIdCounter.current()] = priceEUR;
     }
 
     /**
@@ -102,7 +119,7 @@ contract tGHP is
         view
         returns (string memory)
     {
-        if (_tokenIdPrice[tokenId_] == 0)
+        if (_tokenIdPrices[tokenId_] == 0)
             return "tGHP: This token isn't setup yet.";
         return "";
     }
@@ -113,9 +130,11 @@ contract tGHP is
 
     /**
      * @dev Initialize proxy function
-     *
+     * @param priceFeed_MATIC_USD address Chainlink price feed MATIC USD
+     * @param priceFeed_EUR_USD address Chainlink price feed EUR USD
+     * @param wallet_ address where funds will be transfered
      */
-    function initialize(address priceFeed_MATIC_USD, address priceFeed_EUR_USD)
+    function initialize(address priceFeed_MATIC_USD, address priceFeed_EUR_USD, address wallet_)
         public
         initializer
     {
@@ -124,6 +143,7 @@ contract tGHP is
         __Ownable_init();
         _MATICUSD = AggregatorV3Interface(priceFeed_MATIC_USD);
         _EURUSD = AggregatorV3Interface(priceFeed_EUR_USD);
+        _wallet = wallet_;
     }
 
     /**
@@ -133,6 +153,7 @@ contract tGHP is
     function changeMATICEUR(uint256 _weiAmount)
         public
         virtual
+        view 
         returns (uint256)
     {
         (, int256 MATICUSD, , , ) = _MATICUSD.latestRoundData();
@@ -168,6 +189,6 @@ contract tGHP is
      * @dev Determines how ETH is stored/forwarded on purchases.
      */
     function _forwardFunds() internal {
-        Address.sendValue(payable(_wallet), msg.value);
+        AddressUpgradeable.sendValue(payable(_wallet), msg.value);
     }
 }

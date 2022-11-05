@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/vachmara/tGHP/workflows/master/badge.svg)](https://github.com/vachmara/tGHP/actions)
+[![Actions Status](https://github.com/E3GO/E3GO-contract/workflows/master/badge.svg)](https://github.com/E3GO/E3GO-contract/actions)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![license](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 

@@ -1,16 +1,17 @@
-// contracts/MocktGHP.sol
+// contracts/MockE3GO.sol
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.0;
 
-import "./tGHP.sol";
+import "./E3GO.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 /**
- * @title MocktGHP.sol
+ * @title MockE3GO.sol
  * WARNING: use only for testing and debugging purpose
  */
- contract MocktGHP is tGHP {
+ contract MockE3GO is E3GO {
     
+    // Bypass the upgrade implementation function
     function coverage() external {
         super._authorizeUpgrade(address(this));
     }
@@ -35,7 +36,7 @@ contract TestMaticUsd is AggregatorV3Interface{
         return 1;
     }
 
-    function getRoundData(uint80 _roundId)
+    function getRoundData(uint80) //_roundId
         external
         pure
         returns (
@@ -82,7 +83,7 @@ contract TestEurUsd is AggregatorV3Interface{
         return 1;
     }
 
-    function getRoundData(uint80 _roundId)
+    function getRoundData(uint80)
         external
         pure
         returns (

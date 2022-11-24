@@ -7,9 +7,7 @@ require("hardhat-docgen");
 require("hardhat-tracer");
 require("hardhat-gas-reporter");
 require("solidity-coverage");
-require("dotenv").config({
-  path: "C:/Users/Valentin/Desktop/Projet/sparkso-token/.env",
-});
+require("dotenv").config();
 
 const etherscanApiKey = getEtherscanApiKey();
 
@@ -28,9 +26,10 @@ module.exports = {
   },
   networks: {
     hardhat: {
-      chainId: 1,
+      chainId: 80001,
       accounts: {
         accountsBalance: "10000000000000000000000000",
+        mnemonic: process.env.POLYGON_MUMBAI_PRIVATE_KEY
       },
     },
     mainnet: mainnetNetworkConfig(),

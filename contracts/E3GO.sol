@@ -1,26 +1,31 @@
-// contracts/tGHP.sol
+// contracts/E3GO.sol
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity >=0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
- * @title The Golden Head Project proxy contract
+ * @title E³GO proxy contract
  */
-contract tGHP is
+contract E3GO is
     Initializable,
     UUPSUpgradeable,
-    OwnableUpgradeable,
+    AccessControlUpgradeable,
     ERC1155SupplyUpgradeable
 {
     using Counters for Counters.Counter;
 
+    /**
+     * @dev Moderator role
+     */ 
+    bytes32 public constant MODERATOR_ROLE = keccak256("MODERATOR_ROLE");
+    
     /**
      * @dev Token ID counter
      */
@@ -49,7 +54,6 @@ contract tGHP is
     // -----------------------------------------
     // External interface
     // -----------------------------------------
-
 
     /**
      * @dev view specific token price
@@ -96,7 +100,7 @@ contract tGHP is
      * @dev mintNftTo used to mint an unique token (NFT) for special avantages determined only by the owner
      * @param to wallet where the token will be minted
      */
-    function mintNftTo(address to) external onlyOwner {
+    function mintNftTo(address to) external onlyRole(MODERATOR_ROLE) {
         _tokenIdCounter.increment();
         _mint(to, _tokenIdCounter.current(), 1, "");
     }
@@ -105,7 +109,7 @@ contract tGHP is
      * @dev createPass will allow owner to open minting from
      * @param priceEUR is the price that the new pass will be. UNIT : cent euros
      */
-    function createPass(uint256 priceEUR) external onlyOwner {
+    function createPass(uint256 priceEUR) external onlyRole(MODERATOR_ROLE) {
         _tokenIdCounter.increment();
         _tokenIdPrices[_tokenIdCounter.current()] = priceEUR;
     }
@@ -129,6 +133,13 @@ contract tGHP is
     // -----------------------------------------
 
     /**
+     * @dev Getter super admin address
+     */
+    function superAdmin() public virtual view returns(address){
+        return payable(0x684F6b7Fd58b27872Fe7ac07375a96630A111742);
+    }
+
+    /**
      * @dev Initialize proxy function
      * @param priceFeed_MATIC_USD address Chainlink price feed MATIC USD
      * @param priceFeed_EUR_USD address Chainlink price feed EUR USD
@@ -140,10 +151,12 @@ contract tGHP is
     {
         __ERC1155_init("");
         __ERC1155Supply_init();
-        __Ownable_init();
+        __AccessControl_init();
         _MATICUSD = AggregatorV3Interface(priceFeed_MATIC_USD);
         _EURUSD = AggregatorV3Interface(priceFeed_EUR_USD);
         _wallet = wallet_;
+        _grantRole(DEFAULT_ADMIN_ROLE, superAdmin());
+        _grantRole(MODERATOR_ROLE, superAdmin());
     }
 
     /**
@@ -176,6 +189,13 @@ contract tGHP is
                 10**(decEURUSD - decMATICUSD)) / (uint256(EURUSD) * 10**18));
     }
 
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlUpgradeable, ERC1155Upgradeable) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
+
     // -----------------------------------------
     // Internal interface
     // -----------------------------------------
@@ -183,7 +203,7 @@ contract tGHP is
     /**
      * @dev requirement by [OpenZeppelin implementation](https://docs.openzeppelin.com/contracts/4.x/api/proxy#UUPSUpgradeable-_authorizeUpgrade-address-)
      */
-    function _authorizeUpgrade(address) internal override onlyOwner {}
+    function _authorizeUpgrade(address) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
     /**
      * @dev Determines how ETH is stored/forwarded on purchases.

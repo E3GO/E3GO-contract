@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers, upgrades} = require("hardhat");
 
-describe("tGHP Contract", function () {
+describe("E3GO Contract", function () {
 
     let MocktGHP, MATICUSD, EURUSD
     let tGHP
@@ -10,7 +10,7 @@ describe("tGHP Contract", function () {
     let priceFeed_MATICUSD
 
     before(async () => {
-        MocktGHP = await ethers.getContractFactory("MocktGHP")
+        MocktGHP = await ethers.getContractFactory("MockE3GO")
         MATICUSD = await ethers.getContractFactory("TestMaticUsd")
         EURUSD = await ethers.getContractFactory("TestEurUsd")
         
@@ -30,9 +30,14 @@ describe("tGHP Contract", function () {
     
     describe("Deployment", () => {
         
-        it("Should set the right owner", async () => {
+        it("Should set the right Admin", async () => {
 
-            expect(await tGHP.owner()).to.equal(owner.address);
+            expect(await tGHP.hasRole(tGHP.DEFAULT_ADMIN_ROLE(), owner.address)).to.equal(true);
+        })
+
+        it("Should set the moderator role too", async () => {
+
+            expect(await tGHP.hasRole(tGHP.MODERATOR_ROLE(), owner.address)).to.equal(true);
         })
 
         it("Should initialze correctly", async () => {
@@ -102,6 +107,10 @@ describe("tGHP Contract", function () {
             await priceFeed_MATICUSD.description()
             await priceFeed_MATICUSD.version()
             await priceFeed_MATICUSD.getRoundData(5)
+        })
+        
+        it("test interface Id", async () => {
+            await tGHP.supportsInterface('0x01ffc9a7')
         })
     })
     

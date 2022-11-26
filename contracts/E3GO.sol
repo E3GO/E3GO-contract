@@ -140,7 +140,7 @@ contract E3GO is
     }
 
     /**
-     * @dev Initialize proxy function
+     * @dev Initialize proxy contract
      * @param priceFeed_MATIC_USD address Chainlink price feed MATIC USD
      * @param priceFeed_EUR_USD address Chainlink price feed EUR USD
      * @param wallet_ address where funds will be transfered

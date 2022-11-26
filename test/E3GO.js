@@ -1,10 +1,11 @@
 const { expect } = require("chai");
 const { ethers, upgrades} = require("hardhat");
+const ERC1967Proxy = require('@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/ERC1967Proxy.json')
 
 describe("E3GO Contract", function () {
 
     let MocktGHP, MATICUSD, EURUSD
-    let tGHP
+    let tGHP, Proxy
     let owner, addr1, addr2, addr3
     let priceFeed_EURUSD
     let priceFeed_MATICUSD
@@ -13,6 +14,7 @@ describe("E3GO Contract", function () {
         MocktGHP = await ethers.getContractFactory("MockE3GO")
         MATICUSD = await ethers.getContractFactory("TestMaticUsd")
         EURUSD = await ethers.getContractFactory("TestEurUsd")
+        Proxy = await ethers.getContractFactory(ERC1967Proxy.abi, ERC1967Proxy.bytecode)
         
         priceFeed_MATICUSD = await MATICUSD.deploy()
         await priceFeed_MATICUSD.deployed()
@@ -23,9 +25,16 @@ describe("E3GO Contract", function () {
     beforeEach(async () => {
         [owner, addr1, addr2, addr3, funds] = await ethers.getSigners()
         
-        tGHP = await upgrades.deployProxy(MocktGHP, [priceFeed_MATICUSD.address, priceFeed_EURUSD.address, funds.address]);
-    
-        await tGHP.deployed();
+        const fragment = MocktGHP.interface.getFunction("initialize");
+        const data = MocktGHP.interface.encodeFunctionData(fragment, [priceFeed_MATICUSD.address, priceFeed_EURUSD.address, funds.address])
+        
+        let mock = await MocktGHP.deploy()
+        await mock.deployed()
+        await mock.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero)
+        
+        let temp = await Proxy.deploy(mock.address, data);
+        await temp.deployed();  
+        tGHP = MocktGHP.attach(temp.address)
     })
     
     describe("Deployment", () => {
@@ -87,11 +96,21 @@ describe("E3GO Contract", function () {
         })
 
     })
-    
+
     describe("Full coverage", () => {
-        it("_authorizeUpgrade test", async () => {
+        /*it("_authorizeUpgrade test", async () => {
             expect(tGHP.coverage()).to.be.reverted;
         })
+        Remplacing this by upgrading the implementation
+        */
+       it("Deploy V2 implementation", async () => {
+            let mock = await MocktGHP.deploy()
+            await mock.deployed()
+            await mock.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero)
+            
+            tGHP.upgradeTo(mock.address)
+            
+       })
 
         it("decEURUSD < decMATICUSD and the else path (useless because price feed have same decimals but 100%", async () => {
             await priceFeed_EURUSD.setDecimal(7)

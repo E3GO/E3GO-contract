@@ -1,7 +1,7 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-solhint");
 require("@nomiclabs/hardhat-etherscan");
-require('@openzeppelin/hardhat-upgrades');
+//require('@openzeppelin/hardhat-upgrades');
 require("hardhat-abi-exporter");
 require("hardhat-docgen");
 require("hardhat-tracer");
@@ -16,7 +16,7 @@ const etherscanApiKey = getEtherscanApiKey();
  */
 module.exports = {
   solidity: {
-    version: "0.8.13",
+    version: "0.8.9",
     settings: {
       optimizer: {
         enabled: true,

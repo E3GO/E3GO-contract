@@ -13,7 +13,7 @@
     "deploy:mainnet": "npx hardhat run scripts/deploy.js --network mainnet",
     "deploy:goerli": "npx hardhat run scripts/deploy.js --network goerli",
     "deploy:polygon:mainnet": "npx hardhat run scripts/deploy.js --network polygonMainnet",
-    "deploy:polygon:mumbai": "npx hardhat run scripts/deploy-test.js --network polygonMumbai"
+    "deploy:polygon:mumbai": "npx hardhat run scripts/deploy.js --network polygonMumbai"
   },
   "files": [
     "build/abi",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vachmara/tGHP.git"
+    "url": "git+https://github.com/E3GO/E3GO-contract.git"
   },
   "keywords": [
     "ERC20",
@@ -31,7 +31,7 @@
     "Blockchain"
   ],
   "author": "Valentin Chmara",
-  "homepage": "https://github.com/vachmara/tGHP#readme",
+  "homepage": "https://github.com/E3GO/E3GO-contract#readme",
   "dependencies": {
     "@chainlink/contracts": "^0.4.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",

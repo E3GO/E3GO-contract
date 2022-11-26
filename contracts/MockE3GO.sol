@@ -11,11 +11,6 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
  */
  contract MockE3GO is E3GO {
     
-    // Bypass the upgrade implementation function
-    function coverage() external {
-        super._authorizeUpgrade(address(this));
-    }
-
  }
 
 contract TestMaticUsd is AggregatorV3Interface{

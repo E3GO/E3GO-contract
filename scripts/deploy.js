@@ -14,10 +14,10 @@ async function main() {
   const Proxy = await hre.ethers.getContractFactory(ERC1967Proxy.abi, ERC1967Proxy.bytecode)
   let imp = await Imp.deploy()
   await imp.deployed()
-  await imp.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero)
+  await imp.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero, "")
   
   const fragment = Imp.interface.getFunction("initialize");
-  const data = Imp.interface.encodeFunctionData(fragment, [priceFeed_MATICUSD, priceFeed_EURUSD, "0x684F6b7Fd58b27872Fe7ac07375a96630A111742"])
+  const data = Imp.interface.encodeFunctionData(fragment, [priceFeed_MATICUSD, priceFeed_EURUSD, "0x684F6b7Fd58b27872Fe7ac07375a96630A111742", ""])
 
   let proxy = await Proxy.deploy(imp.address, data)
   await proxy.deployed()

@@ -8,6 +8,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol"
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 /**
@@ -25,7 +26,16 @@ contract E3GO is
      * @dev Moderator role
      */ 
     bytes32 public constant MODERATOR_ROLE = keccak256("MODERATOR_ROLE");
-    
+
+    /**
+     * @dev Constant E³GO
+     */
+    string public constant PROJECT = "E3GO";
+    /**
+     * @dev Creator Name
+     */ 
+    string public CreatorName;
+
     /**
      * @dev Token ID counter
      */
@@ -145,16 +155,17 @@ contract E3GO is
      * @param priceFeed_EUR_USD address Chainlink price feed EUR USD
      * @param wallet_ address where funds will be transfered
      */
-    function initialize(address priceFeed_MATIC_USD, address priceFeed_EUR_USD, address wallet_)
+    function initialize(address priceFeed_MATIC_USD, address priceFeed_EUR_USD, address wallet_, string memory creatorName)
         public
         initializer
     {
-        __ERC1155_init("");
+        __ERC1155_init(string(abi.encodePacked("https://storage.googleapis.com/e3go-metadatas/", StringsUpgradeable.toHexString(address(this)), "/{id}.json")));
         __ERC1155Supply_init();
         __AccessControl_init();
         _MATICUSD = AggregatorV3Interface(priceFeed_MATIC_USD);
         _EURUSD = AggregatorV3Interface(priceFeed_EUR_USD);
         _wallet = wallet_;
+        CreatorName = creatorName;
         _grantRole(DEFAULT_ADMIN_ROLE, superAdmin());
         _grantRole(MODERATOR_ROLE, superAdmin());
     }

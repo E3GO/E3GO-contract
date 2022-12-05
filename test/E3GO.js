@@ -26,11 +26,11 @@ describe("E3GO Contract", function () {
         [owner, addr1, addr2, addr3, funds] = await ethers.getSigners()
         
         const fragment = MocktGHP.interface.getFunction("initialize");
-        const data = MocktGHP.interface.encodeFunctionData(fragment, [priceFeed_MATICUSD.address, priceFeed_EURUSD.address, funds.address])
+        const data = MocktGHP.interface.encodeFunctionData(fragment, [priceFeed_MATICUSD.address, priceFeed_EURUSD.address, funds.address, "Test"])
         
         let mock = await MocktGHP.deploy()
         await mock.deployed()
-        await mock.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero)
+        await mock.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero, "IMPLEMENTATION")
         
         let temp = await Proxy.deploy(mock.address, data);
         await temp.deployed();  
@@ -106,7 +106,7 @@ describe("E3GO Contract", function () {
        it("Deploy V2 implementation", async () => {
             let mock = await MocktGHP.deploy()
             await mock.deployed()
-            await mock.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero)
+            await mock.initialize(ethers.constants.AddressZero, ethers.constants.AddressZero, ethers.constants.AddressZero, "IMPLEMENTATION")
             
             tGHP.upgradeTo(mock.address)
             

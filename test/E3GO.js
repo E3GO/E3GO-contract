@@ -95,6 +95,11 @@ describe("E3GO Contract", function () {
             expect(await tGHP.checkClaimEligibility(0)).to.equal("tGHP: This token isn't setup yet.")
         })
 
+        it("Verify URI", async () => {
+            await tGHP.createPass(550)
+            expect(await tGHP.uri(1)).to.equal("https://storage.googleapis.com/e3go-metadatas/"+tGHP.address.toLowerCase()+"/1.json")
+        })
+
     })
 
     describe("Full coverage", () => {

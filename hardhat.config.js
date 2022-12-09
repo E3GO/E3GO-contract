@@ -147,8 +147,8 @@ function polygonMainnetNetworkConfig() {
     url = `${process.env.POLYGON_MAINNET_ENDPOINT}`;
   }
 
-  if (process.env.POLYGON_MAINNET_PRIVATE_KEY) {
-    accountPrivateKey = `${process.env.POLYGON_MAINNET_PRIVATE_KEY}`;
+  if (process.env.POLYGON_MUMBAI_PRIVATE_KEY) {
+    accountPrivateKey = `${process.env.POLYGON_MUMBAI_PRIVATE_KEY}`;
   }
 
   return {

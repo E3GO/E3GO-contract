@@ -143,10 +143,18 @@ contract E3GO is
     // -----------------------------------------
 
     /**
+     * @dev override uri 
+     */
+    function uri(uint256 tokenId) public view virtual override returns (string memory) {
+        return string(abi.encodePacked("https://storage.googleapis.com/e3go-metadatas/", StringsUpgradeable.toHexString(address(this)), "/", StringsUpgradeable.toString(tokenId),".json"));
+    }
+    
+    
+    /**
      * @dev Getter super admin address
      */
     function superAdmin() public virtual view returns(address){
-        return payable(0x684F6b7Fd58b27872Fe7ac07375a96630A111742);
+        return payable(0xF64f1C3Ee6BEeFBC1629e8882BB6e687065137e1);
     }
 
     /**
@@ -159,7 +167,7 @@ contract E3GO is
         public
         initializer
     {
-        __ERC1155_init(string(abi.encodePacked("https://storage.googleapis.com/e3go-metadatas/", StringsUpgradeable.toHexString(address(this)), "/{id}.json")));
+        __ERC1155_init("");
         __ERC1155Supply_init();
         __AccessControl_init();
         _MATICUSD = AggregatorV3Interface(priceFeed_MATIC_USD);

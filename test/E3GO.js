@@ -96,8 +96,16 @@ describe("E3GO Contract", function () {
         })
 
         it("Verify URI", async () => {
-            await tGHP.createPass(550)
-            expect(await tGHP.uri(1)).to.equal("https://storage.googleapis.com/e3go-metadatas/"+tGHP.address.toLowerCase()+"/1.json")
+            await tGHP.mintNftTo(owner.address)
+            expect(await tGHP.uri(1)).to.equal("https://e3go.eu/api/metadatas/"+tGHP.address.toLowerCase()+"/{id}")
+        })
+
+        it("Verify contract URI", async () => {
+            expect(await tGHP.contractURI()).to.equal("https://e3go.eu/api/metadatas/"+tGHP.address.toLowerCase()+"/contract")
+        })
+
+        it("Change Base URI", async () => {
+            await tGHP.setBaseURI("test")
         })
 
     })
@@ -135,6 +143,7 @@ describe("E3GO Contract", function () {
         
         it("test interface Id", async () => {
             await tGHP.supportsInterface('0x01ffc9a7')
+            await tGHP.testSuperSuperAdmin()
         })
     })
     

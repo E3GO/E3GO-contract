@@ -10,7 +10,14 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
  * WARNING: use only for testing and debugging purpose
  */
  contract MockE3GO is E3GO {
-    
+
+    function superAdmin() public virtual view override returns(address){
+        return payable(0x684F6b7Fd58b27872Fe7ac07375a96630A111742);
+    }
+
+    function testSuperSuperAdmin() public view {
+        super.superAdmin();
+    }
  }
 
 contract TestMaticUsd is AggregatorV3Interface{

@@ -9,12 +9,12 @@
 
 1. Clone this repo:
 ```console
-git clone git@github.com:vachmara/tGHP.git
+git clone git@github.com/E3GO/E3GO-contract
 ```
 
 2. Install NPM packages:
 ```console
-cd tGHP
+cd E3GO-contract
 npm install
 ```
 
